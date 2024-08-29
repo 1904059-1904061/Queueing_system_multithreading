@@ -22,20 +22,4 @@ public class Customer {
     public int getServiceTime() {
         return serviceTime;
     }
-
-    public void setServed(boolean served) {
-        this.served = served;
-    }
-
-    public void setLeft(boolean left) {
-        this.left = left;
-    }
-
-    public boolean isServed() {
-        return served;
-    }
-
-    public boolean isLeft() {
-        return left;
-    }
 }

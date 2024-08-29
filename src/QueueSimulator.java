@@ -46,19 +46,19 @@ public class QueueSimulator {
         simulationRunning = false;
         bankQueue.signalAll();
         System.out.println("Simulation ended");
-        System.out.println("Total Customers Served: " + bankQueue.getserved());
-        System.out.println("Total Customers Left: " + bankQueue.getleft());
+        System.out.println("Total Customers served: " + bankQueue.getserved());
+        System.out.println("Total Customers left: " + bankQueue.getleft());
+        System.out.println("Remaining Customer in the queue: " + bankQueue.queueSize());
     }
 
     private void customerArrival() {
         while (simulationRunning) {
             Customer customer = new Customer(k);
             if (!bankQueue.addCustomer(customer)) {
-                customer.setLeft(true);
                 bankQueue.incrementLeft();
             }
             try {
-                Thread.sleep((2 + random.nextInt(4)) * 1000L); // sleep for 2 to 5 seconds
+                Thread.sleep((2 + random.nextInt(5)) * 1000L); // sleep for 2 to 6 seconds
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -70,8 +70,7 @@ public class QueueSimulator {
             try {
                 Customer customer = bankQueue.getNextCustomer();
                 if (customer != null) {
-                    Thread.sleep(customer.getServiceTime() * 1000L);
-                    customer.setServed(true);
+                    Thread.sleep(customer.getServiceTime() * 1000L); //service time ekdom first ei constructor dye set kra ase randomly
                     bankQueue.incrementServed();
                 }
             } catch (InterruptedException e) {

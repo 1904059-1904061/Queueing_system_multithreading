@@ -87,4 +87,7 @@ public class BankQueue {
     public boolean isEmpty() {
         return queue.isEmpty();
     }
+    public int queueSize(){
+        return queue.size();
+    }
 }
