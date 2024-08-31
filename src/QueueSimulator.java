@@ -5,17 +5,16 @@ public class QueueSimulator {
     private final int simulationTime; // in seconds
     private final Random random = new Random();
     private volatile boolean simulationRunning = true;
-    private final int tellers;
+    private int tellers ;
     private int k = 0;
-    public QueueSimulator(BankQueue bankQueue, int simulationTime, int tellers) {
+    public QueueSimulator(BankQueue bankQueue, int simulationTime){
         this.bankQueue = bankQueue;
         this.simulationTime = simulationTime;
-        this.tellers = tellers;
     }
-
     public void startSimulation() {
         Thread simulationThread = new Thread(this::simulate);
         Thread customerArrivalThread = new Thread(this::customerArrival);
+        tellers = bankQueue.getTeller();
         Thread[] tellerThreads = new Thread[tellers];
         simulationThread.start();
         customerArrivalThread.start();

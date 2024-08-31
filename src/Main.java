@@ -3,9 +3,9 @@ public class Main {
         int tellers = 3;
         int maxLength = 5;
         int simulationMinutes = 2;
-        int simulationSeconds = simulationMinutes * 60;
-        BankQueue bankQueue = new BankQueue(maxLength);
-        QueueSimulator simulator = new QueueSimulator(bankQueue,simulationSeconds, tellers);
+        int simulationSeconds = simulationMinutes * 5;
+        BankQueue bankQueue = new BankQueue(tellers,maxLength);
+        QueueSimulator simulator = new QueueSimulator(bankQueue,simulationSeconds);
         simulator.startSimulation();
     }
 }

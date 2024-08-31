@@ -7,13 +7,15 @@ import java.util.concurrent.locks.ReentrantLock;
 public class BankQueue {
     private final Queue<Customer> queue;
     private final int maxLength;
+    private final int tellers;
     private int served = 0;
     private int left = 0;
     private final Lock lock;
     private final Condition notEmpty;
 
-    public BankQueue(int maxLength) {
+    public BankQueue(int tellers,int maxLength) {
         this.queue = new LinkedList<>();
+        this.tellers = tellers;
         this.maxLength = maxLength;
         this.lock = new ReentrantLock();
         this.notEmpty = lock.newCondition();
@@ -89,5 +91,8 @@ public class BankQueue {
     }
     public int queueSize(){
         return queue.size();
+    }
+    public int getTeller(){
+        return tellers;
     }
 }
