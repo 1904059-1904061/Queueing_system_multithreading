@@ -21,5 +21,24 @@ public class GroceryQueue {
         }
         this.lock = new ReentrantLock();
         this.notEmpty = lock.newCondition();
-    }   
+    }
+    public boolean addCustomer(Customer customer) {
+        Queue<Customer> selectedq = queues.get(0);
+        for (int i = 1; i < queues.size(); i++) { 
+            if (queues.get(i).size() < selectedq.size()) {
+                selectedq = queues.get(i);
+            }
+        }
+    
+        if (selectedq.size() < maxLength) {
+            selectedq.add(customer);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public int getCashier(){
+        return numQueues;
+    }
+       
 }

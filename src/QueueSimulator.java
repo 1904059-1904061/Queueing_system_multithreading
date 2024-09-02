@@ -7,6 +7,7 @@ public class QueueSimulator {
     private final Random random = new Random();
     private volatile boolean simulationRunning = true;
     private int tellers ;
+    private int cashiers;
     private int k = 0;
     public QueueSimulator(BankQueue bankQueue,GroceryQueue groceryQueue ,int simulationTime){
         this.bankQueue = bankQueue;
@@ -19,6 +20,8 @@ public class QueueSimulator {
         Thread grocerycustomerArrivalThread = new Thread(this::grocerycustomerArrival);
         tellers = bankQueue.getTeller();
         Thread[] tellerThreads = new Thread[tellers];
+        cashiers = groceryQueue.getCashier();
+        Thread[] cashierThreads = new Thread[cashiers];
         simulationThread.start();
         bankcustomerArrivalThread.start();
         grocerycustomerArrivalThread.start();
@@ -26,12 +29,19 @@ public class QueueSimulator {
             tellerThreads[i] = new Thread(this::serveCustomer);
             tellerThreads[i].start();
         }
+        for (int i = 0; i < cashiers; i++) {
+            // cashierThreads[i] = new Thread(this::serveCustomer);
+            cashierThreads[i].start();
+        }
         try {
             simulationThread.join();
             bankcustomerArrivalThread.join();
             grocerycustomerArrivalThread.join();
             for (Thread tellerThread : tellerThreads) {
                 tellerThread.join();
+            }
+            for (Thread cashierThread : cashierThreads) {
+                cashierThread.join();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -41,7 +51,7 @@ public class QueueSimulator {
         while ( k < simulationTime ) {
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException e) {                  
                 Thread.currentThread().interrupt();
             }
             k++;
