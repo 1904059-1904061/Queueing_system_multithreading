@@ -10,6 +10,7 @@ public class GroceryQueue {
     private List<Queue<Customer>> queues;
     private final int maxLength;
     private final int numQueues;
+    private int left = 0;
     private final Lock lock;
     private final Condition notEmpty;
     public GroceryQueue(int numQueues,int maxLength){
@@ -39,6 +40,14 @@ public class GroceryQueue {
     }
     public int getCashier(){
         return numQueues;
+    }
+    public void incrementLeft() {
+        lock.lock();
+        try {
+            left++;
+        } finally {
+            lock.unlock();
+        }
     }
        
 }

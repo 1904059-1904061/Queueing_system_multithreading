@@ -81,10 +81,17 @@ public class QueueSimulator {
         while (simulationRunning) {
             Customer customer = new Customer(k);
             if (!groceryQueue.addCustomer(customer)) {
-                
+                try {
+                    Thread.sleep(10 * 1000L); // sleep for 10 seconds.karon queue khali na thakle 10 sec wait korbe
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                if (!groceryQueue.addCustomer(customer)){
+                    groceryQueue.incrementLeft();
+                }
             }
             try {
-                Thread.sleep((2 + random.nextInt(5)) * 1000L); // sleep for 2 to 6 seconds
+                Thread.sleep((2 + random.nextInt(5)) * 1000L); // sleep for 2 to 6 seconds for new customer arrival
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
