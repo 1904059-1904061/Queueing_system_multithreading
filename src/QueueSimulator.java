@@ -30,7 +30,7 @@ public class QueueSimulator {
             tellerThreads[i].start();
         }
         for (int i = 0; i < cashiers; i++) {
-            cashierThreads[i] = new Thread(this::servegroceryCustomer);
+            cashierThreads[i] = new Thread(this::servegroceryCustomer(i));
             cashierThreads[i].start();
         }
         try {
@@ -111,10 +111,10 @@ public class QueueSimulator {
             }
         }
     }
-    private void servegroceryCustomer() {
+    private void servegroceryCustomer(int i) {
         while (simulationRunning) {
             try {
-                Customer customer = groceryQueue.getNextCustomer();
+                Customer customer = groceryQueue.getNextCustomer(i);
                 if (customer != null) {
                     Thread.sleep(customer.getServiceTime() * 1000L); //same as bankQ
                     groceryQueue.incrementServed();

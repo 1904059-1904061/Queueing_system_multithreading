@@ -11,6 +11,7 @@ public class GroceryQueue {
     private final int maxLength;
     private final int numQueues;
     private int left = 0;
+    private int served = 0;
     private final Lock lock;
     private final Condition notEmpty;
     public GroceryQueue(int numQueues,int maxLength){
@@ -43,6 +44,20 @@ public class GroceryQueue {
         lock.unlock();
      }
     }
+    public Customer getNextCustomer(int i) throws InterruptedException {
+        lock.lock();
+        try {
+            while (queues.get(i).isEmpty()) {
+                if (!queues.get(i).isEmpty()) {
+                    return queues.get(i).poll();
+                }
+                notEmpty.await(); // wait for a customer to arrive.Other thread will signal him to wake
+            }
+            return queues.get(i).poll();
+        } finally {
+            lock.unlock();
+        }
+    }
     public int getCashier(){
         return numQueues;
     }
@@ -50,6 +65,14 @@ public class GroceryQueue {
         lock.lock();
         try {
             left++;
+        } finally {
+            lock.unlock();
+        }
+    }
+    public void incrementServed() {
+        lock.lock();
+        try {
+            served++;
         } finally {
             lock.unlock();
         }
