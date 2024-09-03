@@ -5,7 +5,7 @@ public class Main {
         int grocerymaxLength = 2;
         int numQueues = 3 ;
         int simulationMinutes = 2;
-        int simulationSeconds = simulationMinutes * 5;
+        int simulationSeconds = simulationMinutes * 60;
         GroceryQueue groceryQueue = new GroceryQueue(numQueues, grocerymaxLength);
         BankQueue bankQueue = new BankQueue(tellers,bankmaxLength);
         QueueSimulator simulator = new QueueSimulator(bankQueue,groceryQueue,simulationSeconds);

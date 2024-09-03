@@ -6,7 +6,6 @@ public class Customer {
     private final int serviceTime;
     private boolean served;
     private boolean left;
-
     public Customer(int arrivalTime) {
         this.arrivalTime = arrivalTime;
         // System.out.println(this.arrivalTime);
