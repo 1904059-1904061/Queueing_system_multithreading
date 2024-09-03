@@ -24,6 +24,8 @@ public class GroceryQueue {
         this.notEmpty = lock.newCondition();
     }
     public boolean addCustomer(Customer customer) {
+        lock.lock();
+        try{
         Queue<Customer> selectedq = queues.get(0);
         for (int i = 1; i < queues.size(); i++) { 
             if (queues.get(i).size() < selectedq.size()) {
@@ -37,6 +39,9 @@ public class GroceryQueue {
         } else {
             return false;
         }
+     }finally{
+        lock.unlock();
+     }
     }
     public int getCashier(){
         return numQueues;

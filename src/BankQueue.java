@@ -12,7 +12,7 @@ public class BankQueue {
     private int left = 0;
     private final Lock lock;
     private final Condition notEmpty;
-    private final GroceryQueue[] queues;
+
     public BankQueue(int tellers,int maxLength) {
         this.queue = new LinkedList<>();
         this.tellers = tellers;
