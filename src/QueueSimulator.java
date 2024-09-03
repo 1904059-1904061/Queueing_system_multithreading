@@ -26,11 +26,11 @@ public class QueueSimulator {
         bankcustomerArrivalThread.start();
         grocerycustomerArrivalThread.start();
         for (int i = 0; i < tellers; i++) {
-            tellerThreads[i] = new Thread(this::serveCustomer);
+            tellerThreads[i] = new Thread(this::servebankCustomer);
             tellerThreads[i].start();
         }
         for (int i = 0; i < cashiers; i++) {
-            // cashierThreads[i] = new Thread(this::serveCustomer);
+            cashierThreads[i] = new Thread(this::servegroceryCustomer);
             cashierThreads[i].start();
         }
         try {
@@ -98,13 +98,26 @@ public class QueueSimulator {
         }
     }
 
-    private void serveCustomer() {
+    private void servebankCustomer() {
         while (simulationRunning) {
             try {
                 Customer customer = bankQueue.getNextCustomer();
                 if (customer != null) {
                     Thread.sleep(customer.getServiceTime() * 1000L); //service time ekdom first ei constructor dye set kra ase randomly
                     bankQueue.incrementServed();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+    private void servegroceryCustomer() {
+        while (simulationRunning) {
+            try {
+                Customer customer = groceryQueue.getNextCustomer();
+                if (customer != null) {
+                    Thread.sleep(customer.getServiceTime() * 1000L); //same as bankQ
+                    groceryQueue.incrementServed();
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
