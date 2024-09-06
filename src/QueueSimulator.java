@@ -59,10 +59,15 @@ public class QueueSimulator {
         }
         simulationRunning = false;
         bankQueue.signalAll();
+        groceryQueue.signalAll();
         System.out.println("Simulation ended");
+        System.out.println("***Bank Queue***");
         System.out.println("Total Customers served: " + bankQueue.getserved());
         System.out.println("Total Customers left: " + bankQueue.getleft());
         System.out.println("Remaining Customer in the queue: " + bankQueue.queueSize());
+        System.out.println("***Grocery Queue***");
+        System.out.println("Total Customers served: " + groceryQueue.getserved());
+        System.out.println("Total Customers left: " + groceryQueue.getleft());
     }
 
     private void bankcustomerArrival() {

@@ -36,6 +36,7 @@ public class GroceryQueue {
     
         if (selectedq.size() < maxLength) {
             selectedq.add(customer);
+            notEmpty.signal();
             return true;
         } else {
             return false;
@@ -77,5 +78,19 @@ public class GroceryQueue {
             lock.unlock();
         }
     }
-       
+    public void signalAll() {
+        lock.lock();
+        try {
+            notEmpty.signalAll();
+        } finally {
+            lock.unlock();
+        }
+    }
+    public int getserved() {
+        return served;
+    }
+
+    public int getleft() {
+        return left;
+    }      
 }
