@@ -12,6 +12,7 @@ public class GroceryQueue {
     private final int numQueues;
     private int left = 0;
     private int served = 0;
+    private int arrived = 0;
     private final Lock lock;
     private final Condition notEmpty;
     public GroceryQueue(int numQueues,int maxLength){
@@ -70,6 +71,14 @@ public class GroceryQueue {
             lock.unlock();
         }
     }
+    public void incrementArrival() {
+        lock.lock();
+        try {
+            arrived++;
+        } finally {
+            lock.unlock();
+        }
+    }
     public void incrementServed() {
         lock.lock();
         try {
@@ -92,5 +101,8 @@ public class GroceryQueue {
 
     public int getleft() {
         return left;
-    }      
+    } 
+    public int getArrival() {
+        return arrived;
+    }     
 }

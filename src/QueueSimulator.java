@@ -62,10 +62,12 @@ public class QueueSimulator {
         groceryQueue.signalAll();
         System.out.println("Simulation ended");
         System.out.println("***Bank Queue***");
+        System.out.println("Total Customers Arrived: " + bankQueue.getArrival());
         System.out.println("Total Customers served: " + bankQueue.getserved());
         System.out.println("Total Customers left: " + bankQueue.getleft());
         System.out.println("Remaining Customer in the queue: " + bankQueue.queueSize());
         System.out.println("***Grocery Queue***");
+        System.out.println("Total Customers Arrived: " + groceryQueue.getArrival());
         System.out.println("Total Customers served: " + groceryQueue.getserved());
         System.out.println("Total Customers left: " + groceryQueue.getleft());
     }
@@ -77,6 +79,7 @@ public class QueueSimulator {
                 bankQueue.incrementLeft();
             }
             try {
+                bankQueue.incrementArrival();
                 Thread.sleep((2 + random.nextInt(5)) * 1000L); // sleep for 2 to 6 seconds
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -95,6 +98,12 @@ public class QueueSimulator {
                 if (!groceryQueue.addCustomer(customer)){
                     groceryQueue.incrementLeft();
                 }
+                else{
+                    groceryQueue.incrementArrival();
+                }
+            }
+            else{
+                groceryQueue.incrementArrival();
             }
             try {
                 Thread.sleep((2 + random.nextInt(5)) * 1000L); // sleep for 2 to 6 seconds for new customer arrival

@@ -10,6 +10,7 @@ public class BankQueue {
     private final int tellers;
     private int served = 0;
     private int left = 0;
+    private int arrived = 0;
     private final Lock lock;
     private final Condition notEmpty;
 
@@ -68,6 +69,15 @@ public class BankQueue {
             lock.unlock();
         }
     }
+    public void incrementArrival() {
+        lock.lock();
+        try {
+            arrived++;
+        } finally {
+            lock.unlock();
+        }
+    }
+
 
     public int getserved() {
         return served;
@@ -95,4 +105,7 @@ public class BankQueue {
     public int getTeller(){
         return tellers;
     }
+    public int getArrival() {
+        return arrived;
+    }  
 }
