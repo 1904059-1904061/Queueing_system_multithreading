@@ -1,8 +1,11 @@
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 
 public class GroceryQueues {
     private GroceryQueue[] queues;
     private int maxQueueLength;
+    private final int WAIT_LIMIT = 10;
 
     public GroceryQueues(int numCashiers, int maxQueueLength) {
         this.maxQueueLength = maxQueueLength;
@@ -35,9 +38,26 @@ public class GroceryQueues {
         return shortestQueue;
     }
 
-    public boolean addCustomer(Customer customer) {
+    public boolean addCustomer(Customer customer, int currentTime) {
         GroceryQueue queue = getShortestQueue();
-        return queue.addCustomer(customer);
+
+        if (queue.addCustomer(customer)) {
+            return true;
+        } else {
+            int waitingStartTime = currentTime;
+
+            while ((currentTime - waitingStartTime) < WAIT_LIMIT) {
+                currentTime++;
+
+                for (GroceryQueue q : queues) {
+                    if (q.addCustomer(customer)) {
+                        return true;
+                    }
+                }
+            }
+            customer.setNotServed();
+            return false;
+        }
     }
 
     public int processQueues(int currentTime) {

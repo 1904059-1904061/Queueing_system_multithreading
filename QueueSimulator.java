@@ -29,6 +29,7 @@ public class QueueSimulator {
 
             if (currentTime >= simulationTime) break;
 
+            // BankQueue customer
             Customer bankCustomer = new Customer(currentTime);
             if (!bankQueue.addCustomer(bankCustomer)) {
                 bankCustomer.setNotServed();
@@ -37,9 +38,9 @@ public class QueueSimulator {
             totalCustomersArrived++;
             bankCustomersServed += bankQueue.processQueue(currentTime);
 
+            // GroceryQueue customer
             Customer groceryCustomer = new Customer(currentTime);
-            if (!groceryQueues.addCustomer(groceryCustomer)) {
-                groceryCustomer.setNotServed();
+            if (!groceryQueues.addCustomer(groceryCustomer, currentTime)) {
                 groceryCustomersLeft++;
             }
             totalCustomersArrived++;
@@ -65,6 +66,7 @@ public class QueueSimulator {
 
     public static void main(String[] args) {
         int simulationTime = 3000;
+        // int simulationTime = 7200;
         int bankTellers = 3;
         int bankMaxLength = 5;
         int numCashiers = 3;
