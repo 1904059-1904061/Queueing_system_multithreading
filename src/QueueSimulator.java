@@ -103,11 +103,11 @@ public class QueueSimulator {
     private void bankcustomerArrival() {
         while (simulationRunning) {
             Customer customer = new Customer(k);
+            bankQueue.incrementArrival();
             if (!bankQueue.addCustomer(customer)) {
                 bankQueue.incrementLeft();
             }
             try {
-                bankQueue.incrementArrival();
                 Thread.sleep((2 + random.nextInt(5)) * 1000L); // sleep for 20 to 60 seconds
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -118,6 +118,7 @@ public class QueueSimulator {
     private void grocerycustomerArrival() {
         while (simulationRunning) {
             Customer customer = new Customer(k);
+            groceryQueue.incrementArrival();
             if (!groceryQueue.addCustomer(customer)) {
                 try {
                     Thread.sleep(10 * 1000L); // sleep for 10 seconds. Queue not empty.
@@ -126,11 +127,7 @@ public class QueueSimulator {
                 }
                 if (!groceryQueue.addCustomer(customer)) {
                     groceryQueue.incrementLeft();
-                } else {
-                    groceryQueue.incrementArrival();
                 }
-            } else {
-                groceryQueue.incrementArrival();
             }
             try {
                 Thread.sleep((2 + random.nextInt(5)) * 1000L); // sleep for 20 to 60 seconds for new customer arrival

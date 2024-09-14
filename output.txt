@@ -1,11 +1,11 @@
 Simulation ended
 ***Bank Queue***
-Total Customers Arrived: 311
-Total Customers served: 20
-Total Customers left: 283
-Average Service Time for Bank Customer: 169.0
+Total Customers Arrived: 155
+Total Customers served: 10
+Total Customers left: 137
+Average Service Time for Bank Customer: 139.0
 ***Grocery Queue***
-Total Customers Arrived: 26
-Total Customers served: 17
-Total Customers left: 71
-Average Service Time for Grocery Customer: 184.0
+Total Customers Arrived: 51
+Total Customers served: 7
+Total Customers left: 34
+Average Service Time for Grocery Customer: 193.0
