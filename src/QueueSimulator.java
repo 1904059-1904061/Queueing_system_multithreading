@@ -1,3 +1,6 @@
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Random;
 
 public class QueueSimulator {
@@ -6,55 +9,77 @@ public class QueueSimulator {
     private final int simulationTime; // in seconds
     private final Random random = new Random();
     private volatile boolean simulationRunning = true;
-    private int tellers ;
+    private int tellers;
     private int cashiers;
     private int k = 0;
     private int totalBankServiceTime = 0;
     private int totalGroceryServiceTime = 0;
-    public QueueSimulator(BankQueue bankQueue,GroceryQueue groceryQueue ,int simulationTime){
+    private PrintStream fileOut;
+
+    public QueueSimulator(BankQueue bankQueue, GroceryQueue groceryQueue, int simulationTime) {
         this.bankQueue = bankQueue;
         this.groceryQueue = groceryQueue;
         this.simulationTime = simulationTime;
     }
+
     public void startSimulation() {
-        Thread simulationThread = new Thread(this::simulate);
-        Thread bankcustomerArrivalThread = new Thread(this::bankcustomerArrival);
-        Thread grocerycustomerArrivalThread = new Thread(this::grocerycustomerArrival);
-        tellers = bankQueue.getTeller();
-        Thread[] tellerThreads = new Thread[tellers];
-        cashiers = groceryQueue.getCashier();
-        Thread[] cashierThreads = new Thread[cashiers];
-        simulationThread.start();
-        bankcustomerArrivalThread.start();
-        grocerycustomerArrivalThread.start();
-        for (int i = 0; i < tellers; i++) {
-            tellerThreads[i] = new Thread(this::servebankCustomer);
-            tellerThreads[i].start();
-        }
-        for (int i = 0; i < cashiers; i++) {
-            int cashierId = i;
-            cashierThreads[i] = new Thread(() -> serveGroceryCustomer(cashierId));
-            cashierThreads[i].start();
-        }
         try {
-            simulationThread.join();
-            bankcustomerArrivalThread.join();
-            grocerycustomerArrivalThread.join();
-            for (Thread tellerThread : tellerThreads) {
-                tellerThread.join();
+            setupFileOutput();
+            Thread simulationThread = new Thread(this::simulate);
+            Thread bankcustomerArrivalThread = new Thread(this::bankcustomerArrival);
+            Thread grocerycustomerArrivalThread = new Thread(this::grocerycustomerArrival);
+            tellers = bankQueue.getTeller();
+            Thread[] tellerThreads = new Thread[tellers];
+            cashiers = groceryQueue.getCashier();
+            Thread[] cashierThreads = new Thread[cashiers];
+            simulationThread.start();
+            bankcustomerArrivalThread.start();
+            grocerycustomerArrivalThread.start();
+            for (int i = 0; i < tellers; i++) {
+                tellerThreads[i] = new Thread(this::servebankCustomer);
+                tellerThreads[i].start();
             }
-            for (Thread cashierThread : cashierThreads) {
-                cashierThread.join();
+            for (int i = 0; i < cashiers; i++) {
+                int cashierId = i;
+                cashierThreads[i] = new Thread(() -> serveGroceryCustomer(cashierId));
+                cashierThreads[i].start();
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            try {
+                simulationThread.join();
+                bankcustomerArrivalThread.join();
+                grocerycustomerArrivalThread.join();
+                for (Thread tellerThread : tellerThreads) {
+                    tellerThread.join();
+                }
+                for (Thread cashierThread : cashierThreads) {
+                    cashierThread.join();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {
+                closeFileOutput();
+            }
+        } catch (IOException e) {
+            System.err.println("Error setting up file output: " + e.getMessage());
         }
     }
+
+    private void setupFileOutput() throws IOException {
+        fileOut = new PrintStream(new FileOutputStream("output.txt"));
+        System.setOut(fileOut);
+    }
+
+    private void closeFileOutput() {
+        if (fileOut != null) {
+            fileOut.close();
+        }
+    }
+
     private void simulate() {
-        while ( k < simulationTime ) {
+        while (k < simulationTime) {
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {                  
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
             k++;
@@ -67,12 +92,12 @@ public class QueueSimulator {
         System.out.println("Total Customers Arrived: " + bankQueue.getArrival());
         System.out.println("Total Customers served: " + bankQueue.getserved());
         System.out.println("Total Customers left: " + bankQueue.getleft());
-        System.out.println("Average Service Time for Bank Customer: " + (double)(totalBankServiceTime/bankQueue.getserved()));
+        System.out.println("Average Service Time for Bank Customer: " + (double)(totalBankServiceTime / bankQueue.getserved()));
         System.out.println("***Grocery Queue***");
         System.out.println("Total Customers Arrived: " + groceryQueue.getArrival());
         System.out.println("Total Customers served: " + groceryQueue.getserved());
         System.out.println("Total Customers left: " + groceryQueue.getleft());
-        System.out.println("Average Service Time for Grocery Customer: " + (double)(totalGroceryServiceTime/groceryQueue.getserved()));
+        System.out.println("Average Service Time for Grocery Customer: " + (double)(totalGroceryServiceTime / groceryQueue.getserved()));
     }
 
     private void bankcustomerArrival() {
@@ -83,33 +108,32 @@ public class QueueSimulator {
             }
             try {
                 bankQueue.incrementArrival();
-                Thread.sleep((2 + random.nextInt(5)) * 1000L); // sleep for 2 to 6 seconds
+                Thread.sleep((2 + random.nextInt(5)) * 1000L); // sleep for 20 to 60 seconds
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
     }
+
     private void grocerycustomerArrival() {
         while (simulationRunning) {
             Customer customer = new Customer(k);
             if (!groceryQueue.addCustomer(customer)) {
                 try {
-                    Thread.sleep(10 * 1000L); // sleep for 10 seconds.karon queue khali na thakle 10 sec wait korbe
+                    Thread.sleep(10 * 1000L); // sleep for 10 seconds. Queue not empty.
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                if (!groceryQueue.addCustomer(customer)){
+                if (!groceryQueue.addCustomer(customer)) {
                     groceryQueue.incrementLeft();
-                }
-                else{
+                } else {
                     groceryQueue.incrementArrival();
                 }
-            }
-            else{
+            } else {
                 groceryQueue.incrementArrival();
             }
             try {
-                Thread.sleep((2 + random.nextInt(5)) * 1000L); // sleep for 2 to 6 seconds for new customer arrival
+                Thread.sleep((2 + random.nextInt(5)) * 1000L); // sleep for 20 to 60 seconds for new customer arrival
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -121,8 +145,8 @@ public class QueueSimulator {
             try {
                 Customer customer = bankQueue.getNextCustomer();
                 if (customer != null) {
-                    Thread.sleep(customer.getServiceTime() * 1000L); //service time ekdom first ei constructor dye set kra ase randomly
-                    totalBankServiceTime+=customer.getServiceTime();
+                    Thread.sleep(customer.getServiceTime() * 1000L); // service time set randomly
+                    totalBankServiceTime += customer.getServiceTime();
                     bankQueue.incrementServed();
                 }
             } catch (InterruptedException e) {
@@ -130,14 +154,14 @@ public class QueueSimulator {
             }
         }
     }
+
     private void serveGroceryCustomer(int cashierId) {
         while (simulationRunning) {
             try {
                 Customer customer = groceryQueue.getNextCustomer(cashierId);
                 if (customer != null) {
-                    // System.out.println("New customer" + customer.getArrivalTime());
-                    Thread.sleep(customer.getServiceTime() * 1000L); //same as bankQ
-                    totalGroceryServiceTime+=customer.getServiceTime();
+                    Thread.sleep(customer.getServiceTime() * 1000L); // same as bankQueue
+                    totalGroceryServiceTime += customer.getServiceTime();
                     groceryQueue.incrementServed();
                 }
             } catch (InterruptedException e) {

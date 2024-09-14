@@ -9,7 +9,7 @@ public class Customer {
     public Customer(int arrivalTime) {
         this.arrivalTime = arrivalTime;
         // System.out.println(this.arrivalTime);
-        this.serviceTime = 30 + random.nextInt(10); // 6 to 15 seconds
+        this.serviceTime = 60 + random.nextInt(241); // 60 to 300 seconds
         this.served = false;
         this.left = false;
     }
