@@ -9,6 +9,8 @@ public class QueueSimulator {
     private int tellers ;
     private int cashiers;
     private int k = 0;
+    private int totalBankServiceTime = 0;
+    private int totalGroceryServiceTime = 0;
     public QueueSimulator(BankQueue bankQueue,GroceryQueue groceryQueue ,int simulationTime){
         this.bankQueue = bankQueue;
         this.groceryQueue = groceryQueue;
@@ -65,11 +67,12 @@ public class QueueSimulator {
         System.out.println("Total Customers Arrived: " + bankQueue.getArrival());
         System.out.println("Total Customers served: " + bankQueue.getserved());
         System.out.println("Total Customers left: " + bankQueue.getleft());
-        System.out.println("Remaining Customer in the queue: " + bankQueue.queueSize());
+        System.out.println("Average Service Time for Bank Customer: " + (double)(totalBankServiceTime/bankQueue.getserved()));
         System.out.println("***Grocery Queue***");
         System.out.println("Total Customers Arrived: " + groceryQueue.getArrival());
         System.out.println("Total Customers served: " + groceryQueue.getserved());
         System.out.println("Total Customers left: " + groceryQueue.getleft());
+        System.out.println("Average Service Time for Grocery Customer: " + (double)(totalGroceryServiceTime/groceryQueue.getserved()));
     }
 
     private void bankcustomerArrival() {
@@ -119,6 +122,7 @@ public class QueueSimulator {
                 Customer customer = bankQueue.getNextCustomer();
                 if (customer != null) {
                     Thread.sleep(customer.getServiceTime() * 1000L); //service time ekdom first ei constructor dye set kra ase randomly
+                    totalBankServiceTime+=customer.getServiceTime();
                     bankQueue.incrementServed();
                 }
             } catch (InterruptedException e) {
@@ -133,6 +137,7 @@ public class QueueSimulator {
                 if (customer != null) {
                     // System.out.println("New customer" + customer.getArrivalTime());
                     Thread.sleep(customer.getServiceTime() * 1000L); //same as bankQ
+                    totalGroceryServiceTime+=customer.getServiceTime();
                     groceryQueue.incrementServed();
                 }
             } catch (InterruptedException e) {
